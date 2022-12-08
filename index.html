@@ -4,10 +4,58 @@
 <head>
     <title></title>
     <link rel="stylesheet" type="text/css" href="index.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet" />
 </head>
 
 <body>
+    <main>
+        <img id="logo" src="logoP7.PNG" />
+        <input id="search_princip" type="text" placeholder="Rechercher une recette" />
+        <i id="search_icon" class="fa-solid fa-magnifying-glass"></i>
+        <div id="tag_chosen">
+            <div class="tag_chosen ingre">
+                <span>Test</span>
+                <i class="fa-regular fa-circle-xmark"></i>
+            </div>
+        </div>
+        <div class="search_tag">
+            <select class="select" name="ingredients" id="ingredients_select">
+                <option value="default">Ingrédients</option>
+                <option value="test1">Test 1</option>
+                <option value="test2">Test 2</option>
+            </select>
+            <select class="select" name="appareils" id="appareils_select">
+                <option value="default">Appareils</option>
+                <option value="test1">Test 1</option>
+                <option value="test2">Test 2</option>
+            </select>
+            <select class="select" name="ustensiles" id="ustensiles_select">
+                <option value="default">Ustensiles</option>
+                <option value="test1">Test 1</option>
+                <option value="test2">Test 2</option>
+            </select>
+        </div>
+        <!--Ci dessous le second-->
+        <div class="search_tag">
+            <div class="container">
+                <div class="select select_div">
+                    <input type="button" class="select_button" id="select_button" value="Ingrédients">
+                    <i class="fa-solid fa-chevron-down chevron-down"></i>
+                </div>
+                <div class="ingre_options" style="display: none;">
+                    <p>Test1</p>
+                    <p>Test2</p>
+                    <p>Test3</p>
+                    <p>Test4</p>
+                    <p>Test5</p>
+                    <p>Test6</p>
+                </div>
+            </div>
+        </div>
+        <section id="galerie"></section>
+    </main>
 </body>
-<script src="index.js"></script>
+<script type="module" src="index.js"></script>
 
 </html>

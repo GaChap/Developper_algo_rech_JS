@@ -1,0 +1,171 @@
+#logo {
+    display: flex;
+    width: 400px;
+    margin-left: 40%;
+}
+
+/*Champ de recherche principal aka input type search*/
+#search_princip {
+    display: flex;
+    width: 90%;
+    height: 69px;
+    margin-top: 15px;
+    margin-left: 5%;
+    background-color: #E7E7E7;
+    font-size: 18px;
+    padding-left: 25px;
+    border-radius: 5px;
+    border-color: transparent;
+}
+
+/*Icone de loupe*/
+#search_icon {
+    font-size: 32px;
+    position: absolute;
+    top: 180px;
+    right: 67px;
+}
+
+/*Ensemble des tags choisis ou cliqués*/
+#tag_chosen {
+    margin-top: 20px;
+    margin-bottom: 15px;
+    margin-left: 5%;
+    width: 90%;
+}
+
+/*fond bleu des ingrédients*/
+.ingre {
+    background-color: #3282F7;
+}
+
+/*le tag chosi*/
+.tag_chosen {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    width: 107px;
+    height: 37px;
+    border-radius: 5px;
+    color: white;
+}
+
+/*La croix dans le tag*/
+.tag_chosen i {
+    width: 20px;
+    height: 20px;
+    font-size: 20px;
+    position: relative;
+    top: 8px;
+}
+
+/*Le texte dans le tag*/
+.tag_chosen span {
+    position: relative;
+    top: 7px;
+    left: 10px;
+    font-size: 16px;
+    font-family: 'Lato';
+}
+
+/*Ensemble de select*/
+.search_tag {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    margin-left: 5%;
+    /*margin-top: 20px;*/
+    /*Pour quand il n'y a pas de tag choisi*/
+    width: 575px;
+}
+
+/*Les select*/
+.select {
+    width: 170px;
+    height: 69px;
+    border-radius: 5px;
+    border-color: transparent;
+    color: white;
+    font-size: 18px;
+    text-align: center;
+    font-family: 'Lato';
+}
+
+#ingredients_select {
+    background-color: #3282F7;
+}
+
+#appareils_select {
+    background-color: #68D9A4;
+}
+
+#ustensiles_select {
+    background-color: #ED6454;
+}
+
+div[class="select select_div"] {
+    background-color: #3282F7;
+}
+
+div[class="select select_div"] input {
+    background-color: transparent;
+    border-color: transparent;
+    color: white;
+    font-size: 18px;
+}
+
+.select_button {
+    margin-top: 17px;
+    position: relative;
+    left: -11px;
+}
+
+.select_text {
+    position: relative;
+    left: -193px;
+    margin-top: 23px;
+    padding-left: 10px;
+    width: 250px;
+    height: 20px;
+}
+
+.select_text::placeholder {
+    color: white;
+    opacity: 50%;
+    font-size: 18px;
+}
+
+.chevron-down {
+    color: white;
+    animation: test 1s 0.2s both;
+}
+
+.ingre_options {
+    grid-template-columns: 1fr 1fr 1fr;
+    width: 667px;
+    background-color: #3282F7;
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+    font-family: 'Lato';
+    color: white;
+    font-size: 18px;
+    text-align: center;
+}
+
+/*Animations*/
+@keyframes test {
+    0% {
+        transform: rotate(0deg);
+        right: 0px;
+    }
+
+    100% {
+        transform: rotate(180deg);
+        right: -164px;
+    }
+}
+
+/*Ensemble des résultats retenus*/
+#galerie {
+    display: none;
+}
