@@ -6,10 +6,11 @@
     <link rel="stylesheet" type="text/css" href="index.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.css" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
 </head>
 
 <body>
-    <main>
+    <main class="main_container">
         <img id="logo" src="logoP7.PNG" />
         <input id="search_princip" type="text" placeholder="Rechercher une recette" />
         <i id="search_icon" class="fa-solid fa-magnifying-glass"></i>
@@ -36,24 +37,83 @@
                 <option value="test2">Test 2</option>
             </select>
         </div>
-        <!--Ci dessous le second-->
-        <div class="search_tag">
+        <!--Ci dessous le custom-->
+        <div class="search_tag2">
             <div class="container">
                 <div class="select select_div">
                     <input type="button" class="select_button" id="select_button" value="Ingrédients">
                     <i class="fa-solid fa-chevron-down chevron-down"></i>
                 </div>
+                <!--Généré par le Javascript-->
                 <div class="ingre_options" style="display: none;">
-                    <p>Test1</p>
+                    <!--<p>Test1</p>
                     <p>Test2</p>
                     <p>Test3</p>
                     <p>Test4</p>
                     <p>Test5</p>
-                    <p>Test6</p>
+                    <p>Test6</p>-->
                 </div>
             </div>
         </div>
-        <section id="galerie"></section>
+        <section id="galerie">
+            <div class="recipe_card">
+                <div class="recipe_img"></div>
+                <div class="recipe_info">
+                    <span class="recipe_title" id="Test">Test titre</span>
+                    <div class="recipe_info_up_time">
+                        <i class="recipe_time_icon fa-regular fa-clock"></i>
+                        <span class="recipe_time">1 min</span>
+                    </div>
+                    <div class="recipe_info_down_ingr">
+                        <span>Ingrédient : autant</span>
+                        <span>Ingrédient : autant</span>
+                        <span>Ingrédient : autant</span>
+                        <span>Ingrédient : autant</span>
+                    </div>
+                    <div class="recipe_descript">
+                        <span class="recipe_descript_text">Test description du mangeage intensif</span>
+                    </div>
+                </div>
+            </div>
+            <div class="recipe_card">
+                <div class="recipe_img"></div>
+                <div class="recipe_info">
+                    <span class="recipe_title" id="Test">Test titre</span>
+                    <div class="recipe_info_up_time">
+                        <i class="recipe_time_icon fa-regular fa-clock"></i>
+                        <span class="recipe_time">1 min</span>
+                    </div>
+                    <div class="recipe_info_down_ingr">
+                        <span>Ingrédient : autant</span>
+                        <span>Ingrédient : autant</span>
+                        <span>Ingrédient : autant</span>
+                        <span>Ingrédient : autant</span>
+                    </div>
+                    <div class="recipe_descript">
+                        <span class="recipe_descript_text">Test description du mangeage intensif</span>
+                    </div>
+                </div>
+            </div>
+            <div class="recipe_card">
+                <div class="recipe_img"></div>
+                <div class="recipe_info">
+                    <span class="recipe_title" id="Test">Test titre</span>
+                    <div class="recipe_info_up_time">
+                        <i class="recipe_time_icon fa-regular fa-clock"></i>
+                        <span class="recipe_time">1 min</span>
+                    </div>
+                    <div class="recipe_info_down_ingr">
+                        <span>Ingrédient : autant</span>
+                        <span>Ingrédient : autant</span>
+                        <span>Ingrédient : autant</span>
+                        <span>Ingrédient : autant</span>
+                    </div>
+                    <div class="recipe_descript">
+                        <span class="recipe_descript_text">Test description du mangeage intensif</span>
+                    </div>
+                </div>
+            </div>
+        </section>
     </main>
 </body>
 <script type="module" src="index.js"></script>
