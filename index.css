@@ -46,6 +46,7 @@
     display: flex;
     flex-direction: row;
     justify-content: space-around;
+    margin-right: 1%;
     width: 107px;
     height: 37px;
     border-radius: 5px;
@@ -71,15 +72,19 @@
 }
 
 /*Ensemble de select*/
-.search_tag,
-.search_tag2 {
+.search_tag
+
+/*,
+.search_tag2*/
+    {
     display: flex;
     flex-direction: row;
-    justify-content: space-between;
     margin-left: 5%;
-    /*margin-top: 20px;*/
-    /*Pour quand il n'y a pas de tag choisi*/
-    width: 575px;
+    width: 675px;
+}
+
+.container {
+    margin-right: 5%;
 }
 
 /*Les select*/
@@ -140,28 +145,43 @@ div[class="select select_div"] input {
 
 .chevron-down {
     color: white;
-    animation: test 1s 0.2s both;
+    animation: aller 1s 0.2s both;
 }
 
 .chevron-down2 {
     color: white;
-    animation: test2 1s 0.2s both;
+    animation: retour 1s 0.2s both;
 }
 
-.ingre_options {
+.options {
     grid-template-columns: 1fr 1fr 1fr;
     width: 667px;
-    background-color: #3282F7;
     border-bottom-left-radius: 5px;
     border-bottom-right-radius: 5px;
     font-family: 'Lato';
     color: white;
     font-size: 18px;
     text-align: center;
+    display: none;
+}
+
+.ingre_options,
+.ingre {
+    background-color: #3282F7;
+}
+
+.appa_options,
+.appa {
+    background-color: #68D9A4;
+}
+
+.ust_options,
+.usten {
+    background-color: #ED6454;
 }
 
 /*Animations*/
-@keyframes test {
+@keyframes aller {
     0% {
         transform: rotate(0deg);
         right: 0px;
@@ -173,7 +193,7 @@ div[class="select select_div"] input {
     }
 }
 
-@keyframes test2 {
+@keyframes retour {
     0% {
         transform: rotate(180deg);
         right: -164px;
