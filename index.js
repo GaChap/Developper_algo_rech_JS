@@ -1,26 +1,25 @@
-//import { createElement } from '../Front-End-Fisheye/scripts/factories/domElement.mjs';
+import { createElement, querySelector, appendElement, classAdd } from './domElement.mjs';
 import { recipes } from './recipes.js';
 //Fonctions
 //Fonction pour générer les "tag" automatiquement
 function generer_tag(type, value) {
-    const tagChosen = document.createElement("div");
-    tagChosen.classList.add("tag_chosen");
-    const tagChosenText = document.createElement("span");
+    const tagChosen = createElement("div");
+    classAdd(tagChosen, ["tag_chosen"]);
+    const tagChosenText = createElement("span");
     tagChosenText.innerText = value;
-    const tagChosenMark = document.createElement("i")
-    tagChosenMark.classList.add("fa-regular");
-    tagChosenMark.classList.add("fa-circle-xmark");
+    const tagChosenMark = createElement("i")
+    classAdd(tagChosenMark, ["fa-regular", "fa-circle-xmark"]);
     //Suppression du tag quand X cliqué
     tagChosenMark.addEventListener("click", (e) => {
         tagChosen.remove();
     })
     //Switch pour la couleur de fond
     switch (type) {
-        case 'Ingrédients': tagChosen.classList.add(`ingre`);
+        case 'Ingrédients': classAdd(tagChosen, ['ingre']);
             break
-        case 'Appareils': tagChosen.classList.add(`appa`);
+        case 'Appareils': classAdd(tagChosen, ['appa']);
             break
-        case 'Ustensiles': tagChosen.classList.add(`usten`);
+        case 'Ustensiles': classAdd(tagChosen, ['usten']);
             break
     }
     //Switch pour la longueur du tag
@@ -38,9 +37,8 @@ function generer_tag(type, value) {
         case 21: tagChosen.style.width = "200px";
             break
     }
-    tagChosen.append(tagChosenText);
-    tagChosen.append(tagChosenMark);
-    document.querySelector("#tag_chosen").append(tagChosen);
+    appendElement(tagChosen, [tagChosenText, tagChosenMark]);
+    appendElement(querySelector("#tag_chosen"), [tagChosen]);
 }
 
 //Processus pour supprimer les doublons
@@ -62,42 +60,42 @@ const uniqueUstensiles = Array.from(new Set(ustensiles));
 let n = 0;
 //Debut génération select
 for (let i = 0; i < 3; i++) {
-    const container = document.createElement("div");
-    container.classList.add("container");
-    const selecteur = document.createElement("div");
-    selecteur.classList.add("select");
-    selecteur.classList.add("select_div");
-    const select_button = document.createElement("input");
+    const container = createElement("div");
+    classAdd(container, ["container"]);
+    const selecteur = createElement("div");
+    classAdd(selecteur, ["select", "select_div"]);
+    const select_button = createElement("input");
     select_button.type = "button";
     select_button.classList.add("select_button");
-    const selectorIcon = document.createElement("i");
-    selectorIcon.classList.add("fa-solid");
-    selectorIcon.classList.add("fa-chevron-down");
-    selectorIcon.classList.add("chevron-down");
+    const selectorIcon = createElement("i");
+    classAdd(selectorIcon, ["fa-solid", "fa-chevron-down", "chevron-down"]);
     selectorIcon.style.animationPlayState = 'paused';
-    const options = document.createElement("div");
-    options.classList.add("options");
+    const options = createElement("div");
+    classAdd(options, ["options"]);
     //Switch pour générer les options selon le type
     switch (i) {
         case 0: select_button.value = "Ingrédients";
             selecteur.id = "ingredients_select";
-            options.classList.add("ingre_options");
+            classAdd(options, ["ingre_options"]);
             for (let i = 0; i < 6; i++) {
-                const option = document.createElement("p");
+                const option = createElement("p");
                 option.innerText = uniqueIngredients[i];
-                options.append(option);
+                appendElement(options, [option]);
                 option.addEventListener('click', (e) => {
-                    generer_tag(select_button.value, option.innerText);
+                    if (option.classList.contains("active") == false) {
+                        classAdd(option, ["active"]);
+                        generer_tag(select_button.value, option.innerText);
+                    }
                 })
             }
             break
         case 1: select_button.value = "Appareils";
             selecteur.id = "appareils_select";
-            options.classList.add("appa_options");
+            classAdd(options, ["appa_options"]);
             for (let i = 0; i < 6; i++) {
-                const option = document.createElement("p");
+                const option = createElement("p");
                 option.innerText = uniqueAppareils[i];
-                options.append(option);
+                appendElement(options, [option]);
                 option.addEventListener('click', (e) => {
                     generer_tag(select_button.value, option.innerText);
                 })
@@ -105,11 +103,11 @@ for (let i = 0; i < 3; i++) {
             break
         case 2: select_button.value = "Ustensiles";
             selecteur.id = "ustensiles_select";
-            options.classList.add("ust_options");
+            classAdd(options, ["ust_options"]);
             for (let i = 0; i < 6; i++) {
-                const option = document.createElement("p");
+                const option = createElement("p");
                 option.innerText = uniqueUstensiles[i];
-                options.append(option);
+                appendElement(options, [option]);
                 option.addEventListener('click', (e) => {
                     generer_tag(select_button.value, option.innerText);
                 })
@@ -117,15 +115,13 @@ for (let i = 0; i < 3; i++) {
             break
     }
     //Appends
-    selecteur.append(select_button);
-    selecteur.append(selectorIcon);
-    container.append(selecteur);
-    container.append(options);
-    document.querySelector(".search_tag").append(container);
+    appendElement(selecteur, [select_button, selectorIcon]);
+    appendElement(container, [selecteur, options]);
+    appendElement(querySelector(".search_tag"), [container]);
     //Création du champ de texte
-    const selectText = document.createElement("input");
+    const selectText = createElement("input");
     selectText.type = "text";
-    selectText.classList.add("select_text");
+    classAdd(selectText, ["select_text"]);
     selectText.placeholder = "Rechercher un ingrédient";
     select_button.addEventListener('click', (e) => {
         select_button.style.display = "none";
@@ -140,7 +136,7 @@ for (let i = 0; i < 3; i++) {
                 selecteur.children[1].style.display = "inline";
             }
             selectorIcon.classList.remove("chevron-down2");
-            selectorIcon.classList.add("chevron-down");
+            classAdd(selectorIcon, ["chevron-down"]);
         }
         container.parentElement.style.width = "80%";
         //Style du selecteur
@@ -158,7 +154,7 @@ for (let i = 0; i < 3; i++) {
         }
     })
     //Pour "fermer" le sélecteur
-    document.querySelector(".main_container").addEventListener("click", (e) => {
+    querySelector(".main_container").addEventListener("click", (e) => {
         if (!e.target.closest(".search_tag") && n != 0) {
             if (selecteur.children[1] != selectorIcon) {
                 selecteur.children[1].style.display = "none";
@@ -171,10 +167,34 @@ for (let i = 0; i < 3; i++) {
             selecteur.style.borderBottomRightRadius = "5px";
             if (selectorIcon.style.right == "-164px") {
                 selectorIcon.classList.remove("chevron-down");
-                selectorIcon.classList.add("chevron-down2");
+                classAdd(selectorIcon, ["chevron-down2"])
             }
             selecteur.style.width = "170px";
         }
     })
 }
 //Fin génération select
+//console.log(Array.from("Test"));
+querySelector("#search_princip").addEventListener("input", (e) => {
+    const valeur = querySelector("#search_princip").value.toLowerCase();
+    const valueArray = Array.from(valeur);
+    const idxTrouv = [];
+    const titres = [];
+    let monTitre = [];
+    const test = "lol";
+    let trouv = 0;
+    if (valeur.length >= 3) {
+        //const testRecipes = recipes.map(recipe => recipe.name.toLowerCase());
+        //debut recherche 
+        for (let i = 0; i < recipes.length; i++) {
+            titres.push(recipes[i].name.toLowerCase());
+            const titreAct = titres[i].split(" ");
+            titreAct.forEach((titre) => {
+                if (titre == valeur) {
+                    idxTrouv.push(i);
+                }
+            })
+        }
+    }
+    console.log(idxTrouv);
+})  
