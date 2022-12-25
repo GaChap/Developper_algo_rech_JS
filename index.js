@@ -174,27 +174,56 @@ for (let i = 0; i < 3; i++) {
     })
 }
 //Fin génération select
-//console.log(Array.from("Test"));
 querySelector("#search_princip").addEventListener("input", (e) => {
     const valeur = querySelector("#search_princip").value.toLowerCase();
     const valueArray = Array.from(valeur);
     const idxTrouv = [];
     const titres = [];
     let monTitre = [];
-    const test = "lol";
+    //const test = "lol";
     let trouv = 0;
     if (valeur.length >= 3) {
-        //const testRecipes = recipes.map(recipe => recipe.name.toLowerCase());
         //debut recherche 
-        for (let i = 0; i < recipes.length; i++) {
+        /*for (let i = 0; i < recipes.length; i++) {
             titres.push(recipes[i].name.toLowerCase());
             const titreAct = titres[i].split(" ");
             titreAct.forEach((titre) => {
-                if (titre == valeur) {
+                if (titre == valeur || titre.slice(0, valeur.length) == valeur) {
                     idxTrouv.push(i);
                 }
             })
-        }
+        }*/
+        //Algorithme naïf titre
+        const TestRecipName = recipes.filter(function (item2) {
+            const nameArray = item2.name.split(' ');
+            for (let i = 0; i < nameArray.length; i++) {
+                if (nameArray[i].toLowerCase().slice(0, valeur.length) == valeur) {
+                    return true;
+                }
+            }
+            //return item2.id == 1;
+        })
+        //Algorithme naïf ingrédients
+        const TestRecipIngr = recipes.filter(function (item) {
+            const ingrArray = item.ingredients;
+            for (let i = 0; i < ingrArray.length; i++) {
+                const ingrNameArray = ingrArray[i].ingredient.split(' ');
+                for (let i = 0; i < ingrNameArray.length; i++) {
+                    if (ingrNameArray[i].toLowerCase().slice(0, valeur.length) == valeur) {
+                        return true;
+                    }
+                }
+            }
+        })
+        //Algorithme naïf description
+        const TestRecipDesc = recipes.filter(function (item) {
+            const descArray = item.description.split(' ');
+            for (let i = 0; i < descArray.length; i++) {
+                if (descArray[i].toLowerCase().slice(0, valeur.length) == valeur) {
+                    return true;
+                }
+            }
+        });
+        console.log(TestRecipName2);
     }
-    console.log(idxTrouv);
-})  
+})
