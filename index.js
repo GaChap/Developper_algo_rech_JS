@@ -183,25 +183,18 @@ querySelector("#search_princip").addEventListener("input", (e) => {
     //const test = "lol";
     let trouv = 0;
     if (valeur.length >= 3) {
-        //debut recherche 
-        /*for (let i = 0; i < recipes.length; i++) {
-            titres.push(recipes[i].name.toLowerCase());
-            const titreAct = titres[i].split(" ");
-            titreAct.forEach((titre) => {
-                if (titre == valeur || titre.slice(0, valeur.length) == valeur) {
-                    idxTrouv.push(i);
-                }
-            })
-        }*/
         //Algorithme naïf titre
         const TestRecipName = recipes.filter(function (item2) {
             const nameArray = item2.name.split(' ');
             for (let i = 0; i < nameArray.length; i++) {
                 if (nameArray[i].toLowerCase().slice(0, valeur.length) == valeur) {
-                    return true;
+                    return item2;
                 }
             }
-            //return item2.id == 1;
+        })
+        const TestRecipName2 = recipes.filter(function (item) {
+            const nameArray = item.name.split(' ').map(function (item2) { return item2.toLowerCase() });
+            return nameArray.includes(valeur);
         })
         //Algorithme naïf ingrédients
         const TestRecipIngr = recipes.filter(function (item) {
@@ -215,6 +208,17 @@ querySelector("#search_princip").addEventListener("input", (e) => {
                 }
             }
         })
+        const TestRecipIngr2 = recipes.filter(function (item) {
+            const ingrArray = item.ingredients;
+            const ingrNameArray = ingrArray.map(function (ingr) {
+                return ingr.ingredient.toLowerCase().split(' ');
+            }).map(function (tableau) {
+                if (tableau.includes(valeur)) {
+                    return true;
+                }
+            })
+            if (ingrNameArray.includes(true)) { return true };
+        })
         //Algorithme naïf description
         const TestRecipDesc = recipes.filter(function (item) {
             const descArray = item.description.split(' ');
@@ -224,6 +228,22 @@ querySelector("#search_princip").addEventListener("input", (e) => {
                 }
             }
         });
-        console.log(TestRecipName2);
+        const regEx = /\s*[,\.\(\)]\s*/;
+        const TestRecipDesc2 = recipes.filter(function (item) {
+            const descArray = item.description.split(regEx).map(function (phrase) {
+                return phrase.split(" ");
+            }).map(function (motArray) {
+                if (motArray.includes(valeur)) { return true; }
+            });
+            if (descArray.includes(true)) { return true }
+            //console.log(descArray);
+            return descArray.includes(valeur);
+        });
+        //const re = /(?:,+\s*|\.+\s*)/;//A voir avec le mentor
+        const re = /\s*[,\.\(\)]\s*/;
+        const TestMdr = "Manger, c'est, délicieux. Je vais me faire (péter le bide)";
+        const TestLol = ["manger", "test", "boire"];
+        console.log([...TestLol, "Pisser", "Chier"]);
+        //console.log(TestMdr.split(re));
     }
 })
