@@ -176,12 +176,6 @@ for (let i = 0; i < 3; i++) {
 //Fin génération select
 querySelector("#search_princip").addEventListener("input", (e) => {
     const valeur = querySelector("#search_princip").value.toLowerCase();
-    const valueArray = Array.from(valeur);
-    const idxTrouv = [];
-    const titres = [];
-    let monTitre = [];
-    //const test = "lol";
-    let trouv = 0;
     if (valeur.length >= 3) {
         //Algorithme naïf titre
         const TestRecipName = recipes.filter(function (item2) {
@@ -236,14 +230,33 @@ querySelector("#search_princip").addEventListener("input", (e) => {
                 if (motArray.includes(valeur)) { return true; }
             });
             if (descArray.includes(true)) { return true }
-            //console.log(descArray);
             return descArray.includes(valeur);
         });
-        //const re = /(?:,+\s*|\.+\s*)/;//A voir avec le mentor
         const re = /\s*[,\.\(\)]\s*/;
         const TestMdr = "Manger, c'est, délicieux. Je vais me faire (péter le bide)";
+        const testRT = [{ name: "test1" }, { name: "test2" }, { name: "test3" }]
         const TestLol = ["manger", "test", "boire"];
-        console.log([...TestLol, "Pisser", "Chier"]);
+        //console.log([TestRecipDesc, TestRecipIngr, TestRecipName]);
         //console.log(TestMdr.split(re));
+        let ObjectTab = [];
+        if (TestRecipDesc != undefined || TestRecipIngr != undefined || TestRecipName != undefined) {
+            let compte = [TestRecipDesc.length, TestRecipIngr.length, TestRecipName.length];
+            compte.sort(function (a, b) {
+                return a - b;
+            })
+            for (let i = 0; i < compte[compte.length - 1]; i++) {
+                if (TestRecipDesc[i] != undefined && TestRecipDesc[i] != null) {
+                    ObjectTab.push(TestRecipDesc[i]);
+                }
+                if (TestRecipIngr[i] != undefined && TestRecipDesc[i] != null) {
+                    ObjectTab.push(TestRecipIngr[i]);
+                }
+                if (TestRecipName[i] != undefined && TestRecipDesc[i] != null) {
+                    ObjectTab.push(TestRecipName[i]);
+                }
+            }
+        }
+        const ResultRech = Array.from(new Set(ObjectTab));
+        console.log(ResultRech);
     }
 })
