@@ -208,6 +208,7 @@ div[class="select select_div"] input {
 /*Ensemble des résultats retenus*/
 #galerie {
     display: grid;
+    gap: 20px;
     grid-template-columns: 1fr 1fr 1fr;
     margin-left: 5%;
     margin-top: 82px;
@@ -259,22 +260,39 @@ span {
 }
 
 .recipe_info_down_ingr {
+    display: flex;
+    flex-direction: column;
     width: 171px;
     height: 105px;
     margin-left: 20px;
     margin-top: 20px;
 }
 
+.ingredient{
+    display: flex;
+    flex-direction: row;
+    
+}
+
+.ingredient span{
+    font-size: 12px;
+}
+
 .recipe_descript {
     position: relative;
-    top: -105px;
+    top: -115px;
     word-wrap: normal;
     right: -191px;
     width: 171px;
-    height: 105px;
+    height: 102px;
 }
 
-.recipe_descript span {
+.recipe_descript p {
+    height: 88px;
     font-size: 12px;
     font-family: 'Roboto';
+    overflow: hidden;
+    -webkit-line-clamp: 6;
+    -webkit-box-orient: vertical;
+    display: -webkit-box;
 }
