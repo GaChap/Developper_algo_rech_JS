@@ -12,7 +12,34 @@ function generer_tag(type, value) {
     //Suppression du tag quand X cliqué
     tagChosenMark.addEventListener("click", (e) => {
         tagChosen.remove();
-        console.log(e.target.parentElement.innerText)
+        //Suppression de la classe "active"
+        const tagText = e.target.parentElement.innerText
+        const optionsIngre = Array.from(document.querySelector(".ingre_options").childNodes)
+        const optionsAppa = Array.from(document.querySelector(".appa_options").childNodes)
+        const optionsUst = Array.from(document.querySelector(".ust_options").childNodes)
+        let trouve = false;
+        if (trouve == false) {
+            for (let i = 0; i < optionsIngre.length; i++) {
+                if (optionsIngre[i].classList[0] == "active" && optionsIngre[i].innerText == tagText) {
+                    optionsIngre[i].classList.remove("active");
+                    trouve = true;
+                }
+            }
+            for (let i = 0; i < optionsAppa.length; i++) {
+                if (optionsAppa[i].classList[0] == "active" && optionsAppa[i].innerText == tagText) {
+                    optionsAppa[i].classList.remove("active");
+                    trouve = true;
+                }
+            }
+            for (let i = 0; i < optionsUst.length; i++) {
+                if (optionsUst[i].classList[0] == "active" && optionsUst[i].innerText == tagText) {
+                    optionsUst[i].classList.remove("active");
+                    trouve = true;
+                }
+            }
+        }
+        //Regénération des cartes
+        tagFilter();
     })
     //Switch pour la couleur de fond
     switch (type) {
