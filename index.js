@@ -12,6 +12,7 @@ function generer_tag(type, value) {
     //Suppression du tag quand X cliqué
     tagChosenMark.addEventListener("click", (e) => {
         tagChosen.remove();
+        console.log(e.target.parentElement.innerText)
     })
     //Switch pour la couleur de fond
     switch (type) {
@@ -39,27 +40,30 @@ function generer_tag(type, value) {
     }
     appendElement(tagChosen, [tagChosenText, tagChosenMark]);
     appendElement(querySelector("#tag_chosen"), [tagChosen]);
+    tagFilter();
 }
 //Fonction pour faire le rendu
-const render = (word =' ')=>{
-    //galerie.innerHTML = "";
+const render = (word = ' ') => {
+    galerie.innerHTML = "";
     word = word.trim().toLowerCase();
     const filtered = filterData(word);
     generer_carte(filtered);
+    filterOptionsAppaUst();
+    filterOptionsIngre(filtered);
 }
 //Fonction pour filtrer les données suivant un string
-const filterData = (word) =>{
+const filterData = (word) => {
     return recipes.filter(
-        (item)=>
-        item.name.toLowerCase().includes(word)||
-        item.description.toLowerCase().includes(word)||
-        item.ingredients.map((ingr)=>{ ingr.ingredient.toLowerCase()}).includes(word)
+        (item) =>
+            item.name.toLowerCase().includes(word) ||
+            item.description.toLowerCase().includes(word) ||
+            item.ingredients.map((ingr) => { ingr.ingredient.toLowerCase() }).includes(word)
     );
 }
 //Fonction pour générer les carte de recette en suivant un array
 const generer_carte = (donnees) => {
     galerie.innerHTML = "";
-    donnees.forEach((recipe)=>{
+    donnees.forEach((recipe) => {
         //génération de la carte
         const recipe_card = createElement('div');
         classAdd(recipe_card, ['recipe_card']);
@@ -81,7 +85,7 @@ const generer_carte = (donnees) => {
         appendElement(recipe_info_up, [time_icon, time_quantite]);
         const recipe_info_down = createElement("div");
         classAdd(recipe_info_down, ['recipe_info_down_ingr']);
-        recipe.ingredients.forEach((ingr)=>{
+        recipe.ingredients.forEach((ingr) => {
             const leIngredient = createElement('div');
             classAdd(leIngredient, ['ingredient']);
             const ingredient = createElement("span");
@@ -91,15 +95,15 @@ const generer_carte = (donnees) => {
             ingr_name.innerText = `${ingr.ingredient}: `;
             ingr_name.style.fontWeight = "bold";
             ingr_name.style.marginRight = "5px";
-            if(ingr.quantity != undefined && ingr.quantity != null){ingr_quantity = ingr.quantity}
-            if(ingr.unit != undefined && ingr.unit != null){ingr_unit = ingr.unit}
-            switch(ingr_unit){
+            if (ingr.quantity != undefined && ingr.quantity != null) { ingr_quantity = ingr.quantity }
+            if (ingr.unit != undefined && ingr.unit != null) { ingr_unit = ingr.unit }
+            switch (ingr_unit) {
                 case 'cuillères à soupe': ingr_unit = 'cuill. soupe';
-                break
+                    break
                 case 'cuillères à café': ingr_unit = 'cuill. café';
-                break
+                    break
                 case 'grammes': ingr_unit = 'g';
-                break
+                    break
             }
             ingredient.innerText = ` ${ingr_quantity} ${ingr_unit}`;
             appendElement(leIngredient, [ingr_name, ingredient]);
@@ -114,8 +118,62 @@ const generer_carte = (donnees) => {
         appendElement(recipe_info, [recipe_title, recipe_info_up, recipe_info_down, recipe_desc]);
         appendElement(recipe_card, [recipe_img, recipe_info]);
         appendElement(galerie, [recipe_card]);
-        //filterOptionsAppa()
     })
+}
+
+function ClickOption(value, option) {
+    option.addEventListener('click', (e) => {
+        if (option.classList.contains("active") == false) {
+            classAdd(option, ["active"]);
+            generer_tag(value, option.innerText);
+        }
+    })
+}
+//Recherche par les tags
+function tagFilter() {
+    //Récupère tous les tags
+    const tags = document.querySelectorAll(".tag_chosen")
+    let tagIngre = [];
+    let tagAppa = [];
+    let tagUst = [];
+    let resultIngre = false;
+    let resultAppa = false;
+    let resultUst = false;
+    //Selon la 2nde classe répartit les tags dans les tableaux correspondant
+    for (let i = 0; i < tags.length; i++) {
+        switch (tags[i].classList[1]) {
+            case 'ingre': tagIngre = [...tagIngre, tags[i].innerText];
+                break
+            case 'appa': tagAppa = [...tagAppa, tags[i].innerText];
+                break
+            case 'usten': tagUst = [...tagUst, tags[i].innerText];
+                break
+        }
+    }
+    //Recherche effective
+    const recipesArray = recipes.filter(function (recipe) {
+        //Par Appareil
+        resultAppa = tagAppa.every(function (item) {
+            return item == recipe.appliance;
+        });
+        //Par Ustensile(s)
+        resultUst = tagUst.every((item) => { return recipe.ustensils.includes(item) })
+        //Par Ingrédient(s)
+        resultIngre = tagIngre.every((item) => {
+            const ingrNames = recipe.ingredients.map((ingr) => { return ingr.ingredient })
+            return ingrNames.includes(item);
+        })
+        //Affectation de la recette correspondant à la recherche
+        if (resultUst && resultAppa && resultIngre) {
+            return true;
+        }
+    })
+    //Affichage du résultat de la recherche
+    //console.log(recipesArray);
+    //Génération du résultat
+    if (recipesArray != undefined && recipesArray != null) {
+        generer_carte(recipesArray);
+    }
 }
 
 //Processus pour supprimer les doublons
@@ -157,17 +215,11 @@ for (let i = 0; i < 3; i++) {
         case 0: select_button.value = "Ingrédients";
             selecteur.id = "ingredients_select";
             classAdd(options, ["ingre_options"]);
-            for (let i = 0; i < 6; i++) {
+            for (let i = 0; i < uniqueIngredients.length; i++) {
                 const option = createElement("p");
                 option.innerText = uniqueIngredients[i];
                 appendElement(options, [option]);
-                //console.log(options.childNodes);
-                option.addEventListener('click', (e) => {
-                    if (option.classList.contains("active") == false) {
-                        classAdd(option, ["active"]);
-                        generer_tag(select_button.value, option.innerText);
-                    }
-                })
+                ClickOption(select_button.value, option);
             }
             break
         case 1: select_button.value = "Appareils";
@@ -177,9 +229,7 @@ for (let i = 0; i < 3; i++) {
                 const option = createElement("p");
                 option.innerText = uniqueAppareils[i];
                 appendElement(options, [option]);
-                option.addEventListener('click', (e) => {
-                    generer_tag(select_button.value, option.innerText);
-                })
+                ClickOption(select_button.value, option);
             }
             break
         case 2: select_button.value = "Ustensiles";
@@ -189,9 +239,7 @@ for (let i = 0; i < 3; i++) {
                 const option = createElement("p");
                 option.innerText = uniqueUstensiles[i];
                 appendElement(options, [option]);
-                option.addEventListener('click', (e) => {
-                    generer_tag(select_button.value, option.innerText);
-                })
+                ClickOption(select_button.value, option);
             }
             break
     }
@@ -259,7 +307,7 @@ querySelector("#search_princip").addEventListener("input", (e) => {
     const valeur = querySelector("#search_princip").value.toLowerCase();
     if (valeur.length >= 3) {
         render(valeur);
-        
+
         //Algorithme naïf titre
         const TestRecipName = recipes.filter(function (item2) {
             const nameArray = item2.name.split(' ');
@@ -339,46 +387,68 @@ querySelector("#search_princip").addEventListener("input", (e) => {
         const ResultRech = Array.from(new Set(ObjectTab));
         //console.log(ResultRech);
         //console.log(filterData('coco'));
-    }else{
-        if(valeur.length < 3){
-            if(galerie_content != undefined && galerie_content != null && galerie_content != document.querySelectorAll('.recipe_card')){
+    } else {
+        if (valeur.length < 3) {
+            if (galerie_content != undefined && galerie_content != null && galerie_content != document.querySelectorAll('.recipe_card')) {
                 //generer_carte(recipes);
             }
         }
     }
 })
-function filterOptionsIngre(word){
-    const ArrayTest = Array.from(querySelector('.ingre_options').childNodes);
-    const filtered = ArrayTest.filter(function(item){
-        return item.innerText.split(' ').includes(word);
+function filterOptionsIngre(filtered) {
+    const testarray = filtered.map((recipe) => {
+        return recipe.ingredients.map((ingr) => {
+            return ingr.ingredient;
+        });
     })
-    if(filtered != undefined || filtered != null){
+    const testarray2 = testarray.join(',').split(',')
+    if (testarray2) {
         querySelector('.ingre_options').innerHTML = '';
-        filtered.forEach((option)=>{
+        testarray2.forEach((option) => {
             const uneOption = createElement("p");
-            uneOption.innerText = option.innerText;
-            appendElement(querySelector('.appa_options'), [uneOption]);
+            uneOption.innerText = option;
+            appendElement(querySelector('.ingre_options'), [uneOption]);
+            ClickOption("Ingrédients", uneOption);
         })
     }
 }
-filterOptionsIngre("coco");
-
-function filterOptionsAppa(){
-    //console.log(document.querySelector("#ingredients_select"));
-    //const ArrayTest = Array.from(querySelector('.appa_options').childNodes);
-    
-    const ArrayTest2 = Array.from(document.querySelectorAll(".recipe_card"));
-    const ArrayTest3 = ArrayTest2.map(function (item){
+//Fonction pour filtrer appareils avec recettes restantes
+function filterOptionsAppaUst() {
+    const recipe_card_array = Array.from(document.querySelectorAll(".recipe_card"));
+    const recipe_name_array = recipe_card_array.map(function (item) {
         return item.lastChild.firstChild.innerText;
     })
-    const Test4 = recipes.filter(function (recipe){
-        return ArrayTest3.includes(recipe.name)
+    const recipes_rest_array = recipes.filter(function (recipe) {
+        return recipe_name_array.includes(recipe.name)
     })
-    if(Test4.length != recipes.length){
-        const Test5 = Test4.map(function(recipe){
+    if (recipes_rest_array.length != recipes.length) {
+        const recipe_appliance_array = recipes_rest_array.map(function (recipe) {
             return recipe.appliance;
         })
-        const Test6 = Array.from(new Set(Test5));
-        console.log(Test6)
+        const recipe_appliance = Array.from(new Set(recipe_appliance_array));
+        if (recipe_appliance) {
+            querySelector(".appa_options").innerHTML = "";
+            recipe_appliance.forEach((appa) => {
+                const option = createElement("p");
+                option.innerText = appa;
+                appendElement(querySelector(".appa_options"), [option]);
+                ClickOption("Appareils", option);
+            })
+        }
+        //ustensiles
+        const recipe_ust_array = recipes_rest_array.map(function (recipe) {
+            return recipe.ustensils;
+        })
+        const recipe_ust = recipe_ust_array.join(",").split(",");
+        const recipe_ust_unique = Array.from(new Set(recipe_ust));
+        if (recipe_ust_unique) {
+            querySelector(".ust_options").innerHTML = "";
+            recipe_ust_unique.forEach((ust) => {
+                const option = createElement("p");
+                option.innerText = ust;
+                appendElement(querySelector(".ust_options"), [option]);
+                ClickOption("Ustensiles", option);
+            })
+        }
     }
 }
