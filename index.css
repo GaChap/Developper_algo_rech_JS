@@ -245,6 +245,13 @@ span {
     margin-left: 20px;
 }
 
+.recipe_title2 {
+    display: flex;
+    position: relative;
+    top: 15px;
+    margin-left: 20px;
+}
+
 .recipe_time {
     position: relative;
     right: -298px;
@@ -268,13 +275,13 @@ span {
     margin-top: 20px;
 }
 
-.ingredient{
+.ingredient {
     display: flex;
     flex-direction: row;
-    
+
 }
 
-.ingredient span{
+.ingredient span {
     font-size: 12px;
 }
 

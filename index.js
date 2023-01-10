@@ -100,13 +100,37 @@ const generer_carte = (donnees) => {
         classAdd(recipe_info, ['recipe_info']);
         const recipe_title = createElement('span');
         classAdd(recipe_title, ['recipe_title']);
-        recipe_title.id = "Test";
-        recipe_title.innerText = recipe.name;
+        //Gérer les noms à rallonge
+        const recipe_title2 = createElement("span");
+        classAdd(recipe_title2, ['recipe_title2']);
+        recipe_title2.innerText = "";
+        if (recipe.name.length >= 32) {
+            const Test1 = recipe.name.split(" ");
+            let Test2 = "";
+            let Test3 = "";
+            for (let i = 0; i < Test1.length; i++) {
+                if (i < 4) {
+                    Test2 += " " + Test1[i];
+                } else {
+                    if (i => 4) {
+                        Test3 += " " + Test1[i];
+                    }
+                }
+            }
+            recipe_title.innerText = Test2;
+            recipe_title2.innerText = Test3;
+        }
+        else { recipe_title.innerText = recipe.name; }
         const recipe_info_up = createElement('div');
         classAdd(recipe_info_up, ['recipe_info_up_time']);
         const time_icon = createElement('i');
         classAdd(time_icon, ["recipe_time_icon", "fa-regular", "fa-clock"]);
         const time_quantite = createElement('span');
+        //Surélever le temps au niveau de la première ligne de nom
+        if (recipe_title2.innerText != "") {
+            time_icon.style.top = "-27px";
+            time_quantite.style.top = "-27px";
+        }
         time_quantite.innerText = `${recipe.time} min`;
         classAdd(time_quantite, ['recipe_time']);
         appendElement(recipe_info_up, [time_icon, time_quantite]);
@@ -141,12 +165,17 @@ const generer_carte = (donnees) => {
         const recipe_desc_text = createElement("p");
         recipe_desc_text.innerText = recipe.description;
         classAdd(recipe_desc_text, ['recipe_descript_text']);
-        appendElement(recipe_desc, [recipe_desc_text]);
-        appendElement(recipe_info, [recipe_title, recipe_info_up, recipe_info_down, recipe_desc]);
+        appendElement(recipe_desc, [recipe_desc_text]);//Test
+        if (recipe_title2 != undefined && recipe_title2 != null) {
+            appendElement(recipe_info, [recipe_title, recipe_title2, recipe_info_up, recipe_info_down, recipe_desc]);
+        } else {
+            appendElement(recipe_info, [recipe_title, recipe_info_up, recipe_info_down, recipe_desc]);
+        }
         appendElement(recipe_card, [recipe_img, recipe_info]);
         appendElement(galerie, [recipe_card]);
     })
 }
+//console.log(document.getElementsByTagName("span"));
 
 function ClickOption(value, option) {
     option.addEventListener('click', (e) => {
