@@ -154,6 +154,8 @@ div[class="select select_div"] input {
 }
 
 .options {
+    position: absolute;
+    z-index: 1;
     grid-template-columns: 1fr 1fr 1fr;
     width: 667px;
     border-bottom-left-radius: 5px;

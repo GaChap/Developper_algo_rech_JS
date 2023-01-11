@@ -39,7 +39,13 @@ function generer_tag(type, value) {
             }
         }
         //Regénération des cartes
-        tagFilter();
+        if (querySelector("#search_princip").value != "") {
+            renderTagText(querySelector("#search_princip").value);
+        } else {
+            const tagResult = tagFilter();
+            generer_carte(tagResult);
+            filterOptions();
+        }
     })
     //Switch pour la couleur de fond
     switch (type) {
@@ -67,7 +73,14 @@ function generer_tag(type, value) {
     }
     appendElement(tagChosen, [tagChosenText, tagChosenMark]);
     appendElement(querySelector("#tag_chosen"), [tagChosen]);
-    tagFilter();
+    if (querySelector("#search_princip").value != "") {
+        renderTagText(querySelector("#search_princip").value);
+    } else {
+        const tagResult = tagFilter();
+        generer_carte(tagResult);
+        filterOptions();
+    }
+
 }
 //Fonction pour faire le rendu
 const render = (word = ' ') => {
@@ -75,8 +88,22 @@ const render = (word = ' ') => {
     word = word.trim().toLowerCase();
     const filtered = filterData(word);
     generer_carte(filtered);
-    filterOptionsAppaUst();
-    filterOptionsIngre(filtered);
+    filterOptions();
+}
+/*function renderTextTag(word){
+
+}*/
+//Fonction croisement tag-text
+function renderTagText(word) {
+    galerie.innerHTML = "";
+    word = word.trim().toLowerCase();
+    const textFiltered = filterData(word);
+    const tagFiltered = tagFilter();
+    const Result = textFiltered.filter((item) => {
+        return tagFiltered.includes(item);
+    })
+    generer_carte(Result);
+    filterOptions();
 }
 //Fonction pour filtrer les données suivant un string
 const filterData = (word) => {
@@ -175,7 +202,6 @@ const generer_carte = (donnees) => {
         appendElement(galerie, [recipe_card]);
     })
 }
-//console.log(document.getElementsByTagName("span"));
 
 function ClickOption(value, option) {
     option.addEventListener('click', (e) => {
@@ -224,11 +250,11 @@ function tagFilter() {
             return true;
         }
     })
-    //Affichage du résultat de la recherche
-    //console.log(recipesArray);
     //Génération du résultat
     if (recipesArray != undefined && recipesArray != null) {
-        generer_carte(recipesArray);
+        return recipesArray;
+        /*generer_carte(recipesArray);
+        filterOptions();*/
     }
 }
 
@@ -251,7 +277,7 @@ const uniqueUstensiles = Array.from(new Set(ustensiles));
 const galerie = querySelector('#galerie');
 generer_carte(recipes);
 const galerie_content = document.querySelectorAll('.recipe_card');
-let n = 0;
+//let n = 0;
 //Debut génération select
 for (let i = 0; i < 3; i++) {
     const container = createElement("div");
@@ -308,7 +334,27 @@ for (let i = 0; i < 3; i++) {
     selectText.type = "text";
     classAdd(selectText, ["select_text"]);
     selectText.placeholder = "Rechercher un ingrédient";
+    //Ecouteur du clic
+    let n = 0;
     select_button.addEventListener('click', (e) => {
+        const target = e.target.parentElement.parentElement;
+        classAdd(target, ["active"]);
+        const containerArray = Array.from(document.querySelectorAll(".container"));
+        const containerArrayLength = containerArray.map((item) => { return item.classList.length });
+        containerArrayLength.forEach((item) => {
+            if (item == 2) {
+                n++;
+            }
+        })
+        if (n >= 2) {
+            containerArray.forEach((item) => {
+                if (item != target && item.classList.length == 2) {
+                    item.classList.remove('active');
+                    n = 1;
+                    RecupDataSelect(item);
+                }
+            })
+        }
         select_button.style.display = "none";
         options.style.display = "grid";
         //Insertion du champ de texte si inexistant
@@ -341,27 +387,47 @@ for (let i = 0; i < 3; i++) {
     //Pour "fermer" le sélecteur
     querySelector(".main_container").addEventListener("click", (e) => {
         if (!e.target.closest(".container") && n != 0) {
+            let selecteurText = null;
             if (selecteur.children[1] != selectorIcon) {
-                selecteur.children[1].style.display = "none";
+                selecteurText = selecteur.children[1];
+                closeSelect(container, selecteur, options, select_button, selectorIcon, selecteurText);
             }
-            container.parentElement.style.width = "575px";
-            select_button.style.display = "inline";
-            options.style.display = "none";
-            selecteur.style.borderRadius = "5px";
-            selecteur.style.borderBottomLeftRadius = "5px";
-            selecteur.style.borderBottomRightRadius = "5px";
-            if (selectorIcon.style.right == "-164px") {
-                selectorIcon.classList.remove("chevron-down");
-                classAdd(selectorIcon, ["chevron-down2"])
-            }
-            selecteur.style.width = "170px";
         }
     })
 }
 //Fin génération select
+//Fonction pour récupérer les données du sélecteur à fermer
+function RecupDataSelect(item) {
+    const container = item;
+    const selecteur = container.firstChild;
+    const options = container.lastChild;
+    const select_button = selecteur.firstChild;
+    const selectorIcon = selecteur.lastChild;
+    if (selecteur.children[1] != selectorIcon) {
+        const selecteurText = selecteur.children[1];
+        closeSelect(container, selecteur, options, select_button, selectorIcon, selecteurText);
+    }
+}
+//Fonction pour fermer le sélecteur
+function closeSelect(container, selecteur, options, select_button, selectorIcon, selecteurText) {
+    selecteurText.style.display = "none";
+    container.parentElement.style.width = "575px";
+    select_button.style.display = "inline";
+    options.style.display = "none";
+    selecteur.style.borderRadius = "5px";
+    selecteur.style.borderBottomLeftRadius = "5px";
+    selecteur.style.borderBottomRightRadius = "5px";
+    if (selectorIcon.style.right == "-164px") {
+        selectorIcon.classList.remove("chevron-down");
+        classAdd(selectorIcon, ["chevron-down2"])
+    }
+    selecteur.style.width = "170px";
+}
+//Recherche par la barre de recherche
 querySelector("#search_princip").addEventListener("input", (e) => {
-    const valeur = querySelector("#search_princip").value.toLowerCase();
-    if (valeur.length >= 3) {
+    const valeur = e.target.value;
+    const tagArray = Array.from(document.querySelectorAll(".tag_chosen"));
+    if (valeur.length >= 3 && tagArray.length == 0) {
         render(valeur);
 
         //Algorithme naïf titre
@@ -441,35 +507,28 @@ querySelector("#search_princip").addEventListener("input", (e) => {
             }
         }
         const ResultRech = Array.from(new Set(ObjectTab));
-        //console.log(ResultRech);
-        //console.log(filterData('coco'));
     } else {
-        if (valeur.length < 3) {
+        if (valeur.length < 3 && tagArray.length == 0) {
             if (galerie_content != undefined && galerie_content != null && galerie_content != document.querySelectorAll('.recipe_card')) {
-                //generer_carte(recipes);
+                render(' ');
+            }
+        } else {
+            if (valeur.length >= 3 && tagArray.length != 0) {
+                const tagTextArray = tagArray.map((tag) => { return tag.innerText; })
+                renderTagText(valeur);
+                //console.log(tagTextArray);
+            } else {
+                if (valeur.length < 3 && tagArray.length != 0) {
+                    const tagFiltered = tagFilter();
+                    generer_carte(tagFiltered);
+                    filterOptions();
+                }
             }
         }
     }
 })
-function filterOptionsIngre(filtered) {
-    const testarray = filtered.map((recipe) => {
-        return recipe.ingredients.map((ingr) => {
-            return ingr.ingredient;
-        });
-    })
-    const testarray2 = testarray.join(',').split(',')
-    if (testarray2) {
-        querySelector('.ingre_options').innerHTML = '';
-        testarray2.forEach((option) => {
-            const uneOption = createElement("p");
-            uneOption.innerText = option;
-            appendElement(querySelector('.ingre_options'), [uneOption]);
-            ClickOption("Ingrédients", uneOption);
-        })
-    }
-}
-//Fonction pour filtrer appareils avec recettes restantes
-function filterOptionsAppaUst() {
+//Fonction pour filtrer options avec recettes restantes
+function filterOptions() {
     const recipe_card_array = Array.from(document.querySelectorAll(".recipe_card"));
     const recipe_name_array = recipe_card_array.map(function (item) {
         return item.lastChild.firstChild.innerText;
@@ -478,6 +537,7 @@ function filterOptionsAppaUst() {
         return recipe_name_array.includes(recipe.name)
     })
     if (recipes_rest_array.length != recipes.length) {
+        //Appareils
         const recipe_appliance_array = recipes_rest_array.map(function (recipe) {
             return recipe.appliance;
         })
@@ -491,7 +551,7 @@ function filterOptionsAppaUst() {
                 ClickOption("Appareils", option);
             })
         }
-        //ustensiles
+        //Ustensiles
         const recipe_ust_array = recipes_rest_array.map(function (recipe) {
             return recipe.ustensils;
         })
@@ -504,6 +564,19 @@ function filterOptionsAppaUst() {
                 option.innerText = ust;
                 appendElement(querySelector(".ust_options"), [option]);
                 ClickOption("Ustensiles", option);
+            })
+        }
+        //Ingrédients
+        const recipe_ingre_array = recipes_rest_array.map(function (recipe) { return recipe.ingredients });
+        const recipe_ingre = recipe_ingre_array.map(function (item) { return item.map((ingr) => { return ingr.ingredient }) }).join(",").split(",")
+        const recipe_ingre_unique = Array.from(new Set(recipe_ingre));
+        if (recipe_ingre_unique) {
+            querySelector(".ingre_options").innerHTML = "";
+            recipe_ingre_unique.forEach((ingr) => {
+                const option = createElement("p");
+                option.innerText = ingr;
+                appendElement(querySelector(".ingre_options"), [option]);
+                ClickOption("Ingrédients", option);
             })
         }
     }
