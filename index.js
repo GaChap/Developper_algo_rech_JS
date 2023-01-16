@@ -3,6 +3,7 @@ import { recipes } from './recipes.js';
 //Fonctions
 //Fonction pour générer les "tag" automatiquement
 function generer_tag(type, value) {
+    //Création du tag
     const tagChosen = createElement("div");
     classAdd(tagChosen, ["tag_chosen"]);
     const tagChosenText = createElement("span");
@@ -73,6 +74,7 @@ function generer_tag(type, value) {
     }
     appendElement(tagChosen, [tagChosenText, tagChosenMark]);
     appendElement(querySelector("#tag_chosen"), [tagChosen]);
+    //Recherche par croisement text-tag ou par tag uniquement
     if (querySelector("#search_princip").value != "") {
         renderTagText(querySelector("#search_princip").value);
     } else {
@@ -90,9 +92,6 @@ const render = (word = ' ') => {
     generer_carte(filtered);
     filterOptions();
 }
-/*function renderTextTag(word){
-
-}*/
 //Fonction croisement tag-text
 function renderTagText(word) {
     galerie.innerHTML = "";
@@ -117,6 +116,13 @@ const filterData = (word) => {
 //Fonction pour générer les carte de recette en suivant un array
 const generer_carte = (donnees) => {
     galerie.innerHTML = "";
+    //console.log(donnees);
+    if (donnees.length == 0) {
+        const msg = createElement('span');
+        msg.innerText = 'Aucune recette ne correspond à votre recherche';
+        msg.id = "Error-array-galerie";
+        appendElement(querySelector("#galerie"), [msg]);
+    }
     donnees.forEach((recipe) => {
         //génération de la carte
         const recipe_card = createElement('div');
@@ -148,12 +154,13 @@ const generer_carte = (donnees) => {
             recipe_title2.innerText = Test3;
         }
         else { recipe_title.innerText = recipe.name; }
+        //Création des autres éléments de la carte
         const recipe_info_up = createElement('div');
         classAdd(recipe_info_up, ['recipe_info_up_time']);
         const time_icon = createElement('i');
         classAdd(time_icon, ["recipe_time_icon", "fa-regular", "fa-clock"]);
         const time_quantite = createElement('span');
-        //Surélever le temps au niveau de la première ligne de nom
+        //Surélever le temps au niveau de la première ligne de nom si nom long
         if (recipe_title2.innerText != "") {
             time_icon.style.top = "-27px";
             time_quantite.style.top = "-27px";
@@ -175,6 +182,7 @@ const generer_carte = (donnees) => {
             ingr_name.style.marginRight = "5px";
             if (ingr.quantity != undefined && ingr.quantity != null) { ingr_quantity = ingr.quantity }
             if (ingr.unit != undefined && ingr.unit != null) { ingr_unit = ingr.unit }
+            //Réduire la taille des unités longues
             switch (ingr_unit) {
                 case 'cuillères à soupe': ingr_unit = 'cuill. soupe';
                     break
@@ -192,7 +200,7 @@ const generer_carte = (donnees) => {
         const recipe_desc_text = createElement("p");
         recipe_desc_text.innerText = recipe.description;
         classAdd(recipe_desc_text, ['recipe_descript_text']);
-        appendElement(recipe_desc, [recipe_desc_text]);//Test
+        appendElement(recipe_desc, [recipe_desc_text]);
         if (recipe_title2 != undefined && recipe_title2 != null) {
             appendElement(recipe_info, [recipe_title, recipe_title2, recipe_info_up, recipe_info_down, recipe_desc]);
         } else {
@@ -202,7 +210,8 @@ const generer_carte = (donnees) => {
         appendElement(galerie, [recipe_card]);
     })
 }
-
+//Fonction pour permettre la génération de tag 
+//avant et après filtrage des options
 function ClickOption(value, option) {
     option.addEventListener('click', (e) => {
         if (option.classList.contains("active") == false) {
@@ -253,8 +262,88 @@ function tagFilter() {
     //Génération du résultat
     if (recipesArray != undefined && recipesArray != null) {
         return recipesArray;
-        /*generer_carte(recipesArray);
-        filterOptions();*/
+    }
+}
+//Fonction pour récupérer les données du sélecteur à fermer
+function RecupDataSelect(item) {
+    const container = item;
+    const selecteur = container.firstChild;
+    const options = container.lastChild;
+    const select_button = selecteur.firstChild;
+    const selectorIcon = selecteur.lastChild;
+    if (selecteur.children[1] != selectorIcon) {
+        const selecteurText = selecteur.children[1];
+        closeSelect(container, selecteur, options, select_button, selectorIcon, selecteurText);
+    }
+}
+//Fonction pour fermer le sélecteur
+function closeSelect(container, selecteur, options, select_button, selectorIcon, selecteurText) {
+    selecteurText.style.display = "none";
+    container.parentElement.style.width = "575px";
+    select_button.style.display = "inline";
+    options.style.display = "none";
+    selecteur.style.borderRadius = "5px";
+    selecteur.style.borderBottomLeftRadius = "5px";
+    selecteur.style.borderBottomRightRadius = "5px";
+    if (selectorIcon.style.right == "-164px") {
+        selectorIcon.classList.remove("chevron-down");
+        classAdd(selectorIcon, ["chevron-down2"])
+    }
+    selecteur.style.width = "170px";
+}
+//Fonction pour filtrer options avec recettes restantes
+function filterOptions() {
+    //Récupération données communes
+    const recipe_card_array = Array.from(document.querySelectorAll(".recipe_card"));
+    const recipe_name_array = recipe_card_array.map(function (item) {
+        return item.lastChild.firstChild.innerText;
+    })
+    const recipes_rest_array = recipes.filter(function (recipe) {
+        return recipe_name_array.includes(recipe.name)
+    })
+    if (recipes_rest_array.length != recipes.length) {
+        //Appareils
+        const recipe_appliance_array = recipes_rest_array.map(function (recipe) {
+            return recipe.appliance;
+        })
+        const recipe_appliance = Array.from(new Set(recipe_appliance_array));
+        if (recipe_appliance) {
+            querySelector(".appa_options").innerHTML = "";
+            recipe_appliance.forEach((appa) => {
+                const option = createElement("p");
+                option.innerText = appa;
+                appendElement(querySelector(".appa_options"), [option]);
+                ClickOption("Appareils", option);
+            })
+        }
+        //Ustensiles
+        const recipe_ust_array = recipes_rest_array.map(function (recipe) {
+            return recipe.ustensils;
+        })
+        const recipe_ust = recipe_ust_array.join(",").split(",");
+        const recipe_ust_unique = Array.from(new Set(recipe_ust));
+        if (recipe_ust_unique) {
+            querySelector(".ust_options").innerHTML = "";
+            recipe_ust_unique.forEach((ust) => {
+                const option = createElement("p");
+                option.innerText = ust;
+                appendElement(querySelector(".ust_options"), [option]);
+                ClickOption("Ustensiles", option);
+            })
+        }
+        //Ingrédients
+        const recipe_ingre_array = recipes_rest_array.map(function (recipe) { return recipe.ingredients });
+        const recipe_ingre = recipe_ingre_array.map(function (item) { return item.map((ingr) => { return ingr.ingredient }) }).join(",").split(",")
+        const recipe_ingre_unique = Array.from(new Set(recipe_ingre));
+        if (recipe_ingre_unique) {
+            querySelector(".ingre_options").innerHTML = "";
+            recipe_ingre_unique.forEach((ingr) => {
+                const option = createElement("p");
+                option.innerText = ingr;
+                appendElement(querySelector(".ingre_options"), [option]);
+                ClickOption("Ingrédients", option);
+            })
+        }
     }
 }
 
@@ -277,9 +366,9 @@ const uniqueUstensiles = Array.from(new Set(ustensiles));
 const galerie = querySelector('#galerie');
 generer_carte(recipes);
 const galerie_content = document.querySelectorAll('.recipe_card');
-//let n = 0;
 //Debut génération select
 for (let i = 0; i < 3; i++) {
+    //Création d'un sélecteur
     const container = createElement("div");
     classAdd(container, ["container"]);
     const selecteur = createElement("div");
@@ -396,33 +485,6 @@ for (let i = 0; i < 3; i++) {
     })
 }
 //Fin génération select
-//Fonction pour récupérer les données du sélecteur à fermer
-function RecupDataSelect(item) {
-    const container = item;
-    const selecteur = container.firstChild;
-    const options = container.lastChild;
-    const select_button = selecteur.firstChild;
-    const selectorIcon = selecteur.lastChild;
-    if (selecteur.children[1] != selectorIcon) {
-        const selecteurText = selecteur.children[1];
-        closeSelect(container, selecteur, options, select_button, selectorIcon, selecteurText);
-    }
-}
-//Fonction pour fermer le sélecteur
-function closeSelect(container, selecteur, options, select_button, selectorIcon, selecteurText) {
-    selecteurText.style.display = "none";
-    container.parentElement.style.width = "575px";
-    select_button.style.display = "inline";
-    options.style.display = "none";
-    selecteur.style.borderRadius = "5px";
-    selecteur.style.borderBottomLeftRadius = "5px";
-    selecteur.style.borderBottomRightRadius = "5px";
-    if (selectorIcon.style.right == "-164px") {
-        selectorIcon.classList.remove("chevron-down");
-        classAdd(selectorIcon, ["chevron-down2"])
-    }
-    selecteur.style.width = "170px";
-}
 //Recherche par la barre de recherche
 querySelector("#search_princip").addEventListener("input", (e) => {
     const valeur = e.target.value;
@@ -431,34 +493,12 @@ querySelector("#search_princip").addEventListener("input", (e) => {
         render(valeur);
 
         //Algorithme naïf titre
-        const TestRecipName = recipes.filter(function (item2) {
-            const nameArray = item2.name.split(' ');
-            for (let i = 0; i < nameArray.length; i++) {
-                if (nameArray[i].toLowerCase().slice(0, valeur.length) == valeur) {
-                    return item2;
-                }
-            }
-        })
         const TestRecipName2 = recipes.filter(function (item) {
             const nameArray = item.name.split(' ').map(function (item2) { return item2.toLowerCase() });
             return nameArray.includes(valeur);
         })
         //Algorithme naïf ingrédients
-        const TestRecipIngr = recipes.filter(function (item) {
-            const ingrArray = item.ingredients;
-            for (let i = 0; i < ingrArray.length; i++) {
-                const ingrNameArray = ingrArray[i].ingredient.split(' ');
-                for (let i = 0; i < ingrNameArray.length; i++) {
-                    if (ingrNameArray[i].toLowerCase().slice(0, valeur.length) == valeur) {
-                        return true;
-                    }
-                }
-            }
-        })
         const TestRecipIngr2 = recipes.filter(function (item) {
-            /*const ingrArray = item.ingredients.map(function(ingr){
-                ingr.ingredient.toLowerCase()
-            }).split(' ').includes(valeur);*/
             const ingrArray = item.ingredients;
             const ingrNameArray = ingrArray.map(function (ingr) {
                 return ingr.ingredient.toLowerCase().split(' ');
@@ -470,14 +510,6 @@ querySelector("#search_princip").addEventListener("input", (e) => {
             if (ingrNameArray.includes(true)) { return true };
         })
         //Algorithme naïf description
-        const TestRecipDesc = recipes.filter(function (item) {
-            const descArray = item.description.split(' ');
-            for (let i = 0; i < descArray.length; i++) {
-                if (descArray[i].toLowerCase().slice(0, valeur.length) == valeur) {
-                    return true;
-                }
-            }
-        });
         const regEx = /\s*[,\.\(\)]\s*/;
         const TestRecipDesc2 = recipes.filter(function (item) {
             const descArray = item.description.split(regEx).map(function (phrase) {
@@ -489,20 +521,20 @@ querySelector("#search_princip").addEventListener("input", (e) => {
             return descArray.includes(valeur);
         });
         let ObjectTab = [];
-        if (TestRecipDesc != undefined || TestRecipIngr != undefined || TestRecipName != undefined) {
-            let compte = [TestRecipDesc.length, TestRecipIngr.length, TestRecipName.length];
+        if (TestRecipDesc2 != undefined || TestRecipIngr2 != undefined || TestRecipName2 != undefined) {
+            let compte = [TestRecipDesc2.length, TestRecipIngr2.length, TestRecipName2.length];
             compte.sort(function (a, b) {
                 return a - b;
             })
             for (let i = 0; i < compte[compte.length - 1]; i++) {
-                if (TestRecipDesc[i] != undefined && TestRecipDesc[i] != null) {
-                    ObjectTab.push(TestRecipDesc[i]);
+                if (TestRecipDesc2[i] != undefined && TestRecipDesc2[i] != null) {
+                    ObjectTab.push(TestRecipDesc2[i]);
                 }
-                if (TestRecipIngr[i] != undefined && TestRecipDesc[i] != null) {
-                    ObjectTab.push(TestRecipIngr[i]);
+                if (TestRecipIngr2[i] != undefined && TestRecipIngr2[i] != null) {
+                    ObjectTab.push(TestRecipIngr2[i]);
                 }
-                if (TestRecipName[i] != undefined && TestRecipDesc[i] != null) {
-                    ObjectTab.push(TestRecipName[i]);
+                if (TestRecipName2[i] != undefined && TestRecipName2[i] != null) {
+                    ObjectTab.push(TestRecipName2[i]);
                 }
             }
         }
@@ -514,9 +546,7 @@ querySelector("#search_princip").addEventListener("input", (e) => {
             }
         } else {
             if (valeur.length >= 3 && tagArray.length != 0) {
-                const tagTextArray = tagArray.map((tag) => { return tag.innerText; })
                 renderTagText(valeur);
-                //console.log(tagTextArray);
             } else {
                 if (valeur.length < 3 && tagArray.length != 0) {
                     const tagFiltered = tagFilter();
@@ -527,57 +557,3 @@ querySelector("#search_princip").addEventListener("input", (e) => {
         }
     }
 })
-//Fonction pour filtrer options avec recettes restantes
-function filterOptions() {
-    const recipe_card_array = Array.from(document.querySelectorAll(".recipe_card"));
-    const recipe_name_array = recipe_card_array.map(function (item) {
-        return item.lastChild.firstChild.innerText;
-    })
-    const recipes_rest_array = recipes.filter(function (recipe) {
-        return recipe_name_array.includes(recipe.name)
-    })
-    if (recipes_rest_array.length != recipes.length) {
-        //Appareils
-        const recipe_appliance_array = recipes_rest_array.map(function (recipe) {
-            return recipe.appliance;
-        })
-        const recipe_appliance = Array.from(new Set(recipe_appliance_array));
-        if (recipe_appliance) {
-            querySelector(".appa_options").innerHTML = "";
-            recipe_appliance.forEach((appa) => {
-                const option = createElement("p");
-                option.innerText = appa;
-                appendElement(querySelector(".appa_options"), [option]);
-                ClickOption("Appareils", option);
-            })
-        }
-        //Ustensiles
-        const recipe_ust_array = recipes_rest_array.map(function (recipe) {
-            return recipe.ustensils;
-        })
-        const recipe_ust = recipe_ust_array.join(",").split(",");
-        const recipe_ust_unique = Array.from(new Set(recipe_ust));
-        if (recipe_ust_unique) {
-            querySelector(".ust_options").innerHTML = "";
-            recipe_ust_unique.forEach((ust) => {
-                const option = createElement("p");
-                option.innerText = ust;
-                appendElement(querySelector(".ust_options"), [option]);
-                ClickOption("Ustensiles", option);
-            })
-        }
-        //Ingrédients
-        const recipe_ingre_array = recipes_rest_array.map(function (recipe) { return recipe.ingredients });
-        const recipe_ingre = recipe_ingre_array.map(function (item) { return item.map((ingr) => { return ingr.ingredient }) }).join(",").split(",")
-        const recipe_ingre_unique = Array.from(new Set(recipe_ingre));
-        if (recipe_ingre_unique) {
-            querySelector(".ingre_options").innerHTML = "";
-            recipe_ingre_unique.forEach((ingr) => {
-                const option = createElement("p");
-                option.innerText = ingr;
-                appendElement(querySelector(".ingre_options"), [option]);
-                ClickOption("Ingrédients", option);
-            })
-        }
-    }
-}

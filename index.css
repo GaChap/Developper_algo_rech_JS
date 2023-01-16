@@ -305,3 +305,8 @@ span {
     -webkit-box-orient: vertical;
     display: -webkit-box;
 }
+
+#Error-array-galerie {
+    width: 500px;
+    margin-left: 100%;
+}
