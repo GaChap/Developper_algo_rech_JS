@@ -85,11 +85,59 @@ function generer_tag(type, value) {
 
 }
 //Fonction pour faire le rendu
-const render = (word = ' ') => {
+const renderNaif = (word = ' ') => {
     galerie.innerHTML = "";
     word = word.trim().toLowerCase();
-    const filtered = filterData(word);
-    generer_carte(filtered);
+    //recherche
+    //Algorithme naïf titre
+    const TestRecipName2 = recipes.filter(function (item) {
+        const nameArray = item.name.split(' ').map(function (item2) { return item2.toLowerCase() });
+        return nameArray.includes(word);
+    })
+    //Algorithme naïf ingrédients
+    const TestRecipIngr2 = recipes.filter(function (item) {
+        const ingrArray = item.ingredients;
+        const ingrNameArray = ingrArray.map(function (ingr) {
+            return ingr.ingredient.toLowerCase().split(' ');
+        }).map(function (tableau) {
+            if (tableau.includes(word)) {
+                return true;
+            }
+        })
+        if (ingrNameArray.includes(true)) { return true };
+    })
+    //Algorithme naïf description
+    const regEx = /\s*[,\.\(\)]\s*/;
+    const TestRecipDesc2 = recipes.filter(function (item) {
+        const descArray = item.description.split(regEx).map(function (phrase) {
+            return phrase.split(" ");
+        }).map(function (motArray) {
+            if (motArray.includes(word)) { return true; }
+        });
+        if (descArray.includes(true)) { return true }
+        return descArray.includes(word);
+    });
+    let ObjectTab = [];
+    if (TestRecipDesc2 != undefined || TestRecipIngr2 != undefined || TestRecipName2 != undefined) {
+        let compte = [TestRecipDesc2.length, TestRecipIngr2.length, TestRecipName2.length];
+        compte.sort(function (a, b) {
+            return a - b;
+        })
+        for (let i = 0; i < compte[compte.length - 1]; i++) {
+            if (TestRecipDesc2[i] != undefined && TestRecipDesc2[i] != null) {
+                ObjectTab.push(TestRecipDesc2[i]);
+            }
+            if (TestRecipIngr2[i] != undefined && TestRecipIngr2[i] != null) {
+                ObjectTab.push(TestRecipIngr2[i]);
+            }
+            if (TestRecipName2[i] != undefined && TestRecipName2[i] != null) {
+                ObjectTab.push(TestRecipName2[i]);
+            }
+        }
+    }
+    const ResultRech = Array.from(new Set(ObjectTab));
+    //fin recherche
+    generer_carte(ResultRech);
     filterOptions();
 }
 //Fonction croisement tag-text
@@ -490,59 +538,11 @@ querySelector("#search_princip").addEventListener("input", (e) => {
     const valeur = e.target.value;
     const tagArray = Array.from(document.querySelectorAll(".tag_chosen"));
     if (valeur.length >= 3 && tagArray.length == 0) {
-        render(valeur);
-
-        //Algorithme naïf titre
-        const TestRecipName2 = recipes.filter(function (item) {
-            const nameArray = item.name.split(' ').map(function (item2) { return item2.toLowerCase() });
-            return nameArray.includes(valeur);
-        })
-        //Algorithme naïf ingrédients
-        const TestRecipIngr2 = recipes.filter(function (item) {
-            const ingrArray = item.ingredients;
-            const ingrNameArray = ingrArray.map(function (ingr) {
-                return ingr.ingredient.toLowerCase().split(' ');
-            }).map(function (tableau) {
-                if (tableau.includes(valeur)) {
-                    return true;
-                }
-            })
-            if (ingrNameArray.includes(true)) { return true };
-        })
-        //Algorithme naïf description
-        const regEx = /\s*[,\.\(\)]\s*/;
-        const TestRecipDesc2 = recipes.filter(function (item) {
-            const descArray = item.description.split(regEx).map(function (phrase) {
-                return phrase.split(" ");
-            }).map(function (motArray) {
-                if (motArray.includes(valeur)) { return true; }
-            });
-            if (descArray.includes(true)) { return true }
-            return descArray.includes(valeur);
-        });
-        let ObjectTab = [];
-        if (TestRecipDesc2 != undefined || TestRecipIngr2 != undefined || TestRecipName2 != undefined) {
-            let compte = [TestRecipDesc2.length, TestRecipIngr2.length, TestRecipName2.length];
-            compte.sort(function (a, b) {
-                return a - b;
-            })
-            for (let i = 0; i < compte[compte.length - 1]; i++) {
-                if (TestRecipDesc2[i] != undefined && TestRecipDesc2[i] != null) {
-                    ObjectTab.push(TestRecipDesc2[i]);
-                }
-                if (TestRecipIngr2[i] != undefined && TestRecipIngr2[i] != null) {
-                    ObjectTab.push(TestRecipIngr2[i]);
-                }
-                if (TestRecipName2[i] != undefined && TestRecipName2[i] != null) {
-                    ObjectTab.push(TestRecipName2[i]);
-                }
-            }
-        }
-        const ResultRech = Array.from(new Set(ObjectTab));
+        renderNaif(valeur);
     } else {
         if (valeur.length < 3 && tagArray.length == 0) {
             if (galerie_content != undefined && galerie_content != null && galerie_content != document.querySelectorAll('.recipe_card')) {
-                render(' ');
+                renderNaif(' ');
             }
         } else {
             if (valeur.length >= 3 && tagArray.length != 0) {
