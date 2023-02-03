@@ -307,11 +307,17 @@ function filterOptions() {
             return recipe.appliance;
         })
         const recipe_appliance = Array.from(new Set(recipe_appliance_array));
-        if (recipe_appliance) {
+        const classActivesApp = Array.from(querySelector('.appa_options').childNodes).filter((item) => { return item.classList.contains("active") });
+        if (recipe_appliance && classActivesApp) {
             querySelector(".appa_options").innerHTML = "";
             recipe_appliance.forEach((appa) => {
                 const option = createElement("p");
                 option.innerText = appa;
+                for (let i = 0; i < classActivesApp.length; i++) {
+                    if (classActivesApp[i].innerText == appa) {
+                        classAdd(option, ['active']);
+                    }
+                }
                 appendElement(querySelector(".appa_options"), [option]);
                 ClickOption("Appareils", option);
             })
@@ -322,11 +328,17 @@ function filterOptions() {
         })
         const recipe_ust = recipe_ust_array.join(",").split(",");
         const recipe_ust_unique = Array.from(new Set(recipe_ust));
-        if (recipe_ust_unique) {
+        const classActivesUst = Array.from(querySelector('.ust_options').childNodes).filter((item) => { return item.classList.contains("active") });
+        if (recipe_ust_unique && classActivesUst) {
             querySelector(".ust_options").innerHTML = "";
             recipe_ust_unique.forEach((ust) => {
                 const option = createElement("p");
                 option.innerText = ust;
+                for (let i = 0; i < classActivesUst.length; i++) {
+                    if (classActivesUst[i].innerText == ust) {
+                        classAdd(option, ['active']);
+                    }
+                }
                 appendElement(querySelector(".ust_options"), [option]);
                 ClickOption("Ustensiles", option);
             })
@@ -335,11 +347,17 @@ function filterOptions() {
         const recipe_ingre_array = recipes_rest_array.map(function (recipe) { return recipe.ingredients });
         const recipe_ingre = recipe_ingre_array.map(function (item) { return item.map((ingr) => { return ingr.ingredient }) }).join(",").split(",")
         const recipe_ingre_unique = Array.from(new Set(recipe_ingre));
-        if (recipe_ingre_unique) {
+        const classActivesIngr = Array.from(querySelector('.ingre_options').childNodes).filter((item) => { return item.classList.contains("active") });
+        if (recipe_ingre_unique && classActivesIngr) {
             querySelector(".ingre_options").innerHTML = "";
             recipe_ingre_unique.forEach((ingr) => {
                 const option = createElement("p");
                 option.innerText = ingr;
+                for (let i = 0; i < classActivesIngr.length; i++) {
+                    if (classActivesIngr[i].innerText == ingr) {
+                        classAdd(option, ['active']);
+                    }
+                }
                 appendElement(querySelector(".ingre_options"), [option]);
                 ClickOption("Ingrédients", option);
             })
