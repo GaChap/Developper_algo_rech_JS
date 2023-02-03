@@ -259,7 +259,7 @@ function ClickOption(type, option) {
         if (option.classList.contains("active") == false) {
             classAdd(option, ["active"]);
             generer_tag(type, option.innerText);
-        } else { e.preventDefault(); }//Marche pas
+        } else { e.preventDefault(); }
     })
 }
 //Recherche par les tags
