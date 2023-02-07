@@ -364,6 +364,34 @@ function filterOptions() {
         }
     }
 }
+//Fonction pour filtrer les options en fonction de son type 
+//quand on tape dans la barre de recherche des options
+function rechOptions(type, valeur, options) {
+    let filtered = null;
+    switch (type) {
+        case "Ingrédients": filtered = uniqueIngredients.filter((item) => {
+            return item.toLowerCase().includes(valeur.toLowerCase());
+        });
+            break;
+        case "Appareils": filtered = uniqueAppareils.filter((item) => {
+            return item.toLowerCase().includes(valeur.toLowerCase());
+        });
+            break;
+        case "Ustensiles": filtered = uniqueUstensiles.filter((item) => {
+            return item.toLowerCase().includes(valeur.toLowerCase());
+        });
+            break;
+    }
+    options.innerHTML = " ";
+    if (filtered != null && filtered.length != 0) {
+        filtered.forEach((item) => {
+            const option = createElement("p");
+            option.innerText = item;
+            appendElement(options, [option]);
+            ClickOption(type, option);
+        })
+    } else { console.log("ERROR 404!"); }
+}
 
 //Processus pour supprimer les doublons
 const ingredients = [];
@@ -490,6 +518,18 @@ for (let i = 0; i < 3; i++) {
         if (n == 0) {
             n++
         }
+        selecteur.children[1].addEventListener("input", function (item) {
+            const valeur = selecteur.children[1].value;
+            const options = item.target.parentElement.parentElement.lastChild;
+            switch (item.target.parentElement.id) {
+                case "ingredients_select": rechOptions("Ingrédients", valeur, options);
+                    break;
+                case "appareils_select": rechOptions("Appareils", valeur, options);
+                    break;
+                case "ustensiles_select": rechOptions("Ustensiles", valeur, options);
+                    break;
+            }
+        })
     })
     //Pour "fermer" le sélecteur
     querySelector(".main_container").addEventListener("click", (e) => {
